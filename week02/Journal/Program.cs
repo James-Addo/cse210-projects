@@ -11,18 +11,11 @@ class Program
 
         while (activeProgram)
         {
-            List<string> menuOptions = new List<string>
-            {
-                "1. Write a new entry",
-                "2. Display the journal",
-                "3. Save journal to file",
-                "4. Load journal from file",
-                "5. Quit"
-            };
+            List<string> actions = new List<string> { "Write", "Display", "Save", "Load", "Quit" };
 
-            foreach (string option in menuOptions)
+            for (int i = 0; i < actions.Count; i++)
             {
-                Console.WriteLine(option);
+                Console.WriteLine($"{i + 1}. {actions[i]}");
             }
             Console.Write("Select an option: ");
 
