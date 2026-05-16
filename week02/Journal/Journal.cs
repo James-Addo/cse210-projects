@@ -9,7 +9,6 @@ public class Journal
     public void AddEntry(Entry newEntry)
     {
         _entries.Add(newEntry);
-        Console.WriteLine("Entry saved!\n");
     }
 
     public void DisplayAll()
@@ -32,10 +31,9 @@ public class Journal
         {
             foreach (Entry entry in _entries)
             {
-                outputFile.WriteLine(entry.ToFileString());
+                outputFile.WriteLine($"{entry._date}~~{entry._promptText}~~{entry._entryText}~~{entry._mood}~~{entry._location}~~{entry._weather}~~{entry._timeSpent}");
             }
         }
-        Console.WriteLine("Journal saved successfully!\n");
     }
 
     public void LoadFromFile(string file)
@@ -46,15 +44,13 @@ public class Journal
             return;
         }
 
-        _entries.Clear();
         string[] lines = File.ReadAllLines(file);
 
         foreach (string line in lines)
         {
-            Entry entry = Entry.FromFileString(line);
+            string[] parts = line.Split("~~");
+            Entry entry = new Entry(parts[0], parts[1], parts[2], parts[4], parts[3], parts[5], parts[6]);
             _entries.Add(entry);
         }
-
-        Console.WriteLine("Journal loaded successfully!\n");
     }
 }

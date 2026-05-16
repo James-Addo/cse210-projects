@@ -1,3 +1,8 @@
+// I have added code to request additional information from the user to be saved in the Journal.
+// Also included is code to handle the case where file doesn't exist when loading.
+// Again, I have added code to handle the case where there are no entries to display when the user selects "Display".
+
+
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -6,53 +11,69 @@ class Program
     static void Main(string[] args)
     {
         Journal journal = new Journal();
-        PromptGenerator promptGen = new PromptGenerator();
+        PromptGenerator promptGenerator = new PromptGenerator();
         bool activeProgram = true;
+
+        Console.WriteLine("Welcome to the Journal Program!\n");
 
         while (activeProgram)
         {
-            List<string> actions = new List<string> { "Write", "Display", "Save", "Load", "Quit" };
+            Console.WriteLine("Please select one of the following choices: ");
+            List<string> choices = new List<string> { "Write", "Display", "Load", "Save", "Quit" };
 
-            for (int i = 0; i < actions.Count; i++)
+            for (int i = 0; i < choices.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {actions[i]}");
+                Console.WriteLine($"{i + 1}. {choices[i]}");
             }
-            Console.Write("Select an option: ");
+            Console.Write("What would you like to do? ");
 
-            string choice = Console.ReadLine();
+            string userChoice = Console.ReadLine();
 
-            if (choice == "1")
+            if (userChoice == "1")
             {
-                string prompt = promptGen.GetRandomPrompt();
-                Console.WriteLine(prompt);
-                Console.Write("> ");
-                string response = Console.ReadLine();
+                string userPrompt = promptGenerator.GetRandomPrompt();
+                Console.WriteLine(userPrompt);
+                Console.Write("Your response: ");
+                string userResponse = Console.ReadLine();
 
-                string date = DateTime.Now.ToShortDateString();
-                Entry newEntry = new Entry(date, prompt, response);
+                Console.Write("How are you feeling? ");
+                string userMood = Console.ReadLine();
+
+                Console.Write("Where are you writing this entry from? ");
+                string userLocation = Console.ReadLine();
+
+                Console.Write("Weather: ");
+                string weather = Console.ReadLine();
+
+                Console.Write("Time spent writing (minutes): ");
+                int userTimeSpent = int.Parse(Console.ReadLine());
+
+                DateTime theCurrentTime = DateTime.Now;
+                string dateText = theCurrentTime.ToShortDateString();
+                Entry newEntry = new Entry(dateText, userPrompt, userResponse, userLocation, userMood, weather, userTimeSpent.ToString());
 
                 journal.AddEntry(newEntry);
             }
-            else if (choice == "2")
+            else if (userChoice == "2")
             {
                 journal.DisplayAll();
             }
-            else if (choice == "3")
+            else if (userChoice == "3")
             {
-                Console.Write("Enter filename to save to: ");
-                string filename = Console.ReadLine();
-                journal.SaveToFile(filename);
-            }
-            else if (choice == "4")
-            {
-                Console.Write("Enter filename to load from: ");
+                Console.WriteLine("What is the filename to load from? ");
                 string filename = Console.ReadLine();
                 journal.LoadFromFile(filename);
             }
-            else if (choice == "5")
+            else if (userChoice == "4")
+            {
+                Console.Write("What is the filename? ");
+                string filename = Console.ReadLine();
+                journal.SaveToFile(filename);
+            }
+            else if (userChoice == "5")
             {
                 activeProgram = false;
-                Console.WriteLine("Goodbye!");
+                Console.WriteLine("Have a great day!");
             }
             else
             {
