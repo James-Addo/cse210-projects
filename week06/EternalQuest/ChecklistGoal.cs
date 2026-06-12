@@ -41,14 +41,16 @@ public class ChecklistGoal : Goal
             status = "[ ]";
         }
 
+        // Using format string $"" for everything
         string result = $"{status} {_shortName} ({_description}) -- Currently completed: {_amountCompleted}/{_target}";
         return result;
     }
     public override string GetStringRepresentation()
     {
-        return "ChecklistGoal:" + _shortName + "|" + _description + "|" + _points + "|" + _bonus + "|" + _target + "|" + _amountCompleted;
+        return "ChecklistGoal|" + _shortName + "|" + _description + "|" + _points + "|" + _bonus + "|" + _target + "|" + _amountCompleted;
     }
 
+    // Helper methods so GoalManager can read these
     public int GetBonus()
     {
         return _bonus;

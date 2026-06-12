@@ -1,15 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
 public class GoalManager
 {
     private List<Goal> _goals;
     private int _score;
-    private int _level; 
 
     public GoalManager()
     {
         _goals = new List<Goal>();
         _score = 0;
-        _level = 1; 
-        
     }
 
     public void Start()
@@ -29,29 +30,29 @@ public class GoalManager
             Console.WriteLine(" 6. Quit");
 
             Console.Write("Select a choice from the menu: ");
-            int userChoice = int.Parse(Console.ReadLine());
+            choice = int.Parse(Console.ReadLine());
 
-            if (userChoice == 1)
+            if (choice == 1)
             {
                 CreateGoal();
             }
-            else if (userChoice == 2)
+            else if (choice == 2)
             {
                 ListGoalDetails();
             }
-            else if (userChoice == 3)
+            else if (choice == 3)
             {
                 SaveGoals();
             }
-            else if (userChoice == 4)
+            else if (choice == 4)
             {
                 LoadGoals();
             }
-            else if (userChoice == 5)
+            else if (choice == 5)
             {
                 RecordEvent();
             }
-            else if (userChoice == 6)
+            else if (choice == 6)
             {
                 Console.WriteLine("Goodbye!");
             }
@@ -64,9 +65,9 @@ public class GoalManager
 
     public void DisplayPlayerInfo()
     {
-        _level = (_score / 100) + 1;
-        Console.WriteLine($"You have {_score} points. Level: {_level}");
+        Console.WriteLine("You have " + _score + " points.");
     }
+
     public void ListGoalNames()
     {
         int number = 1;
@@ -135,18 +136,17 @@ public class GoalManager
         ListGoalNames();
         Console.Write("Which goal did you accomplish? ");
         int goalNumber = int.Parse(Console.ReadLine()) - 1;
-        Goal selectedGoal = _goals[goalNumber];
 
-        int levelBeforeEvent = _level;
+        Goal selectedGoal = _goals[goalNumber];
 
         if (selectedGoal is SimpleGoal)
         {
             if (selectedGoal.IsComplete() == false)
             {
-                int pointsEarned = selectedGoal.GetPoints();
-                _score = _score + pointsEarned;
+                // Use GetPoints() instead of _points
+                _score = _score + selectedGoal.GetPoints();
                 selectedGoal.RecordEvent();
-                Console.WriteLine($"Congratulations! You have earned {pointsEarned} points!");
+                Console.WriteLine("Congratulations! You earned " + selectedGoal.GetPoints() + " points!");
             }
             else
             {
@@ -155,36 +155,35 @@ public class GoalManager
         }
         else if (selectedGoal is EternalGoal)
         {
-            int pointsEarned = selectedGoal.GetPoints();
-            _score = _score + pointsEarned;
+            _score = _score + selectedGoal.GetPoints();
             selectedGoal.RecordEvent();
-            Console.WriteLine($"Congratulations! You have earned {pointsEarned} points!");
+            Console.WriteLine("Congratulations! You earned " + selectedGoal.GetPoints() + " points!");
         }
         else if (selectedGoal is ChecklistGoal)
         {
             ChecklistGoal checklistGoal = (ChecklistGoal)selectedGoal;
-            bool previouslyCompleted = checklistGoal.IsComplete();
-            checklistGoal.RecordEvent();
-            bool isComplete = checklistGoal.IsComplete();
 
-            if (previouslyCompleted == false && isComplete == true)
+            bool wasCompleteBefore = checklistGoal.IsComplete();
+
+            checklistGoal.RecordEvent();
+
+            bool isCompleteNow = checklistGoal.IsComplete();
+
+            if (wasCompleteBefore == false && isCompleteNow == true)
             {
-                int pointsEarned = checklistGoal.GetPoints() + checklistGoal.GetBonus();
-                _score = _score + pointsEarned;
-                Console.WriteLine($"Congratulations! You have earned {pointsEarned} points! Bonus earned!");
+                int pointsForGoal = checklistGoal.GetPoints();
+                int bonusPoints = checklistGoal.GetBonus();
+                int totalPointsEarned = pointsForGoal + bonusPoints;
+
+                _score = _score + totalPointsEarned;
+                Console.WriteLine("Congratulations! You have earned " + totalPointsEarned + " points! Bonus earned!");
             }
             else
             {
-                int pointsEarned = checklistGoal.GetPoints();
-                _score = _score + pointsEarned;
-                Console.WriteLine($"Congratulations! You have earned {pointsEarned} points!");
+                int pointsForGoal = checklistGoal.GetPoints();
+                _score = _score + pointsForGoal;
+                Console.WriteLine("Congratulations! You have earned " + pointsForGoal + " points!");
             }
-        }
-        
-        _level = (_score / 100) + 1;
-        if (_level > levelBeforeEvent)
-        {
-            Console.WriteLine($"*** LEVEL UP! You are now at Level {_level}! ***");
         }
     }
 
@@ -196,7 +195,6 @@ public class GoalManager
         using (StreamWriter outputFile = new StreamWriter(filename))
         {
             outputFile.WriteLine(_score);
-            outputFile.WriteLine(_level);
 
             foreach (Goal goal in _goals)
             {
@@ -206,6 +204,7 @@ public class GoalManager
 
         Console.WriteLine("Goals saved!");
     }
+
     public void LoadGoals()
     {
         Console.Write("What is the filename for the goal file? ");
@@ -214,11 +213,10 @@ public class GoalManager
         string[] lines = File.ReadAllLines(filename);
 
         _score = int.Parse(lines[0]);
-        _level = int.Parse(lines[1]);
 
         _goals.Clear();
 
-        for (int i = 2; i < lines.Length; i++)
+        for (int i = 1; i < lines.Length; i++)
         {
             string[] parts = lines[i].Split('|');
             string goalType = parts[0];

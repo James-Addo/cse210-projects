@@ -5,6 +5,7 @@ public class EternalGoal : Goal
 
     public override void RecordEvent()
     {
+        // Nothing to do, eternal goals never finish
     }
 
     public override bool IsComplete()
@@ -12,14 +13,16 @@ public class EternalGoal : Goal
         return false;
     }
 
+    // Always show [ ] because it's never complete
     public override string GetDetailsString()
     {
         string status = "[ ]";
+        // Using format string $"" 
         string result = $"{status} {_shortName} ({_description})";
         return result;
     }
     public override string GetStringRepresentation()
     {
-        return "EternalGoal:" + _shortName + "|" + _description + "|" + _points;
+        return "EternalGoal|" + _shortName + "|" + _description + "|" + _points;
     }
 }
