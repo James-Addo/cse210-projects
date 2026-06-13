@@ -1,3 +1,5 @@
+using System;
+
 public class ChecklistGoal : Goal
 {
     private int _amountCompleted;
@@ -14,24 +16,18 @@ public class ChecklistGoal : Goal
 
     public override void RecordEvent()
     {
-        _amountCompleted = _amountCompleted + 1;
+        _amountCompleted++;
     }
 
     public override bool IsComplete()
     {
-        if (_amountCompleted >= _target)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return _amountCompleted >= _target;
     }
 
     public override string GetDetailsString()
     {
         string status;
+
         if (IsComplete() == true)
         {
             status = "[X]";
@@ -41,23 +37,17 @@ public class ChecklistGoal : Goal
             status = "[ ]";
         }
 
-        // Using format string $"" for everything
         string result = $"{status} {_shortName} ({_description}) -- Currently completed: {_amountCompleted}/{_target}";
+
         return result;
     }
     public override string GetStringRepresentation()
     {
-        return "ChecklistGoal|" + _shortName + "|" + _description + "|" + _points + "|" + _bonus + "|" + _target + "|" + _amountCompleted;
+        return $"ChecklistGoal|{_shortName}|{_description}|{_points}|{_bonus}|{_target}|{_amountCompleted}";
     }
 
-    // Helper methods so GoalManager can read these
     public int GetBonus()
     {
         return _bonus;
-    }
-
-    public int GetTarget()
-    {
-        return _target;
     }
 }
